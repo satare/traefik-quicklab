@@ -23,8 +23,16 @@ services:
     volumes:
       - /srv/data/blog:/usr/share/nginx/html
     restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.blog-web.rule=Host(`blog.mysite.fr`)"
+      - "traefik.http.routers.blog-web.entrypoints=web"
 
   site:
     image: user/myblog:1
     restart: always
     container_name: "MySite"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.www-web.rule=Host(`www.mysite.fr`)"
+      - "traefik.http.routers.www-web.entrypoints=web"
