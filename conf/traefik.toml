@@ -11,3 +11,7 @@
   [certificatesResolvers.le.acme.httpChallenge]
     # used during the challenge
     entryPoint = "web"
+
+[providers]
+[providers.file]
+    filename = "static.toml"

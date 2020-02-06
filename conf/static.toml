@@ -1,0 +1,25 @@
+[http]
+    ## Nous déclarons nos services. Ces services sont de type "loadbalancer", même si il n'y a qu'une seule adresse.
+    [http.services]
+    [http.services.nas.loadBalancer]
+        [[http.services.nas.loadBalancer.servers]]
+        url = "http://192.168.1.251:5000/" 
+
+    # Je recrée le middleware, même si il a été déclaré dans le provider "docker"
+    [http.middlewares]
+    [http.middlewares.redirect-to-https.redirectScheme]
+        scheme = "https"
+    # je crée un autre middleware de type Basicauth
+    [http.middlewares.auth.basicAuth]
+        users = [
+            "myuser:$apr1$blablablabablablabablablab"
+            ]
+
+    ## Je configure un routeur par service : ce router sert de lien entre la règle d'entrée (host, path, headers, etc) et les services associés. Ils intègrent également les middleware.
+    [http.routers]
+    [http.routers.nas-router]
+        rule = "Host(`mynas.mydomain.com`)"
+        service = "nas"
+        entryPoints = ["websecure"]
+        [http.routers.nas-router.tls]
+            certResolver = "le" # From static configuration
