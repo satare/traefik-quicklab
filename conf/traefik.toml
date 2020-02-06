@@ -1,0 +1,13 @@
+## Static configuration
+[entryPoints]
+  [entryPoints.web]
+    address = ":80"
+  [entryPoints.websecure]
+    address = ":443"
+
+[certificatesResolvers.le.acme]
+  email = "user@domain"
+  storage = "/letsencrypt/acme.json"
+  [certificatesResolvers.le.acme.httpChallenge]
+    # used during the challenge
+    entryPoint = "web"
