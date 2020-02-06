@@ -1,0 +1,30 @@
+version: '3'
+
+volumes:
+  acme:
+
+services:
+
+  traefik:
+    image: "traefik:2.0"
+    container_name: "Traefik2"
+    restart: always
+    ports:
+      - "443:443"
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "acme:/letsencrypt"
+
+  blog:
+    container_name: Blog
+    image: nginx:latest
+    volumes:
+      - /srv/data/blog:/usr/share/nginx/html
+    restart: always
+
+  site:
+    image: user/myblog:1
+    restart: always
+    container_name: "MySite"
