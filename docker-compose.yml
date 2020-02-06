@@ -16,6 +16,8 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "acme:/letsencrypt"
+    labels:
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
 
   blog:
     container_name: Blog
@@ -27,6 +29,10 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.blog-web.rule=Host(`blog.mysite.fr`)"
       - "traefik.http.routers.blog-web.entrypoints=web"
+      - "traefik.http.routers.blog-secure.rule=Host(`blog.mysite.fr`)"
+      - "traefik.http.routers.blog-secure.entrypoints=websecure"
+      - "traefik.http.routers.blog-secure.tls.certresolver=le"
+      - "traefik.http.routers.blog-web.middlewares=redirect-to-https"
 
   site:
     image: user/myblog:1
@@ -36,3 +42,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.www-web.rule=Host(`www.mysite.fr`)"
       - "traefik.http.routers.www-web.entrypoints=web"
+      - "traefik.http.routers.www-secure.rule=Host(`www.mysite.fr`)"
+      - "traefik.http.routers.www-secure.entrypoints=websecure"
+      - "traefik.http.routers.www-secure.tls.certresolver=le"
+      - "traefik.http.routers.www-web.middlewares=redirect-to-https"
