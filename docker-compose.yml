@@ -16,8 +16,11 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "acme:/letsencrypt"
+      - "./conf/traefik.toml:/etc/traefik/traefik.toml"
+      - "./conf/static.toml:/static.toml"
     labels:
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+
 
   blog:
     container_name: Blog
