@@ -12,15 +12,25 @@ services:
     ports:
       - "443:443"
       - "80:80"
-      - "8080:8080"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "acme:/letsencrypt"
       - "./conf/traefik.toml:/etc/traefik/traefik.toml"
       - "./conf/static.toml:/static.toml"
     labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefiksecure.service=api@internal"
+      - "traefik.http.routers.traefiksecure.rule=Host(`traefik.mydomain.ltd`)"
+      - "traefik.http.routers.traefiksecure.entrypoints=websecure"
+      - "traefik.http.routers.traefiksecure.tls.certresolver=le"
+      - "traefik.http.routers.traefiksecure.middlewares=basicauth,ratelimit"
+      - "traefik.http.routers.traefikweb.middlewares=redirect-to-https"
+      - "traefik.http.routers.traefikweb.rule=Host(`traefik..mydomain.ltd`)"
+      - "traefik.http.routers.traefikweb.entrypoints=web"
+      - "traefik.http.middlewares.basicauth.basicauth.users=myuser:htpasswd-style-hash"
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
-
+      - "traefik.http.middlewares.ratelimit.ratelimit.average=10"
+      - "traefik.http.middlewares.ratelimit.ratelimit.burst=5"
 
   blog:
     container_name: Blog
